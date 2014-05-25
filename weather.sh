@@ -17,6 +17,12 @@ modnew=5   # 5 seconds
 # TODO: change ping interval to 1 min or respond to wifi signal?
 # TODO: respond to curl failure
 
+
+## output usage
+usage () {
+    echo "usage: weather [-ctv]"
+}
+
 # tmux
 if [[ "$1" == "-t" ]]; then
 
