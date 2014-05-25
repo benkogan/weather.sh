@@ -1,0 +1,9 @@
+
+{
+  "name": "weather",
+  "version": "0.0.1",
+  "description": "Echo current temperature and weather from Yahoo Weather.",
+  "scripts": [ "weather.sh" ],
+  "install": "make install"
+}
+
