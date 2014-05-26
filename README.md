@@ -23,10 +23,12 @@ usage
 -----
 
 ```
-usage: weather [-ctv]
+usage: weather [-chtV]
 
-[-t]  for tmux -- uses cache file
-[-c]  check in Celcius; default is Fahrenheit
+[-c|--celsius]  check in Celcius; default is Fahrenheit
+[-h|--help   ]  help and usage
+[-t|--tmux   ]  for tmux -- uses cache file
+[-V|--verison]  version
 ```
 
 example
@@ -41,3 +43,4 @@ license
 -------
 
 MIT
+

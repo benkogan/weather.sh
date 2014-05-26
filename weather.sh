@@ -2,31 +2,25 @@
 
 # By Ben Kogan (http://benkogan.com)
 
-VERSION="0.0.1"
-
-cachedir="$HOME/scripts/.cache"
-cache="$HOME/scripts/.cache/weather.log"
-time=$(date +%s)
-modold=210 # 3 minutes 30 seconds
-modmid=180 # 3 minutes
-modnew=5   # 5 seconds
-
 # TODO: change ping interval to 1 min or respond to wifi signal?
 # TODO: respond to curl failure
 
+VERSION="0.0.1"
+
 ## output usage
 usage () {
-    echo "usage: weather [-chtv]"
+    echo "usage: weather [-chtV]"
 }
 
 ## get zipcode
 zipcode () {
-    zipcode=$(curl --silent "http://ipinfo.io/" | grep -e '(postal|})' \
+    zipcode=$(curl --silent "http://ipinfo.io/" | grep -E '(postal|})' \
         | sed -e 's/"postal": "//' -e 's/}//' -e 's/"//' | tr -d '\n  ')
 }
 
 # get weather
 getweather () {
+    zipcode
     if [[ "$2" == "-c" || "$1" == "-c" ]]; then
         weather=$(curl --silent \
             "http://xml.weather.yahoo.com/forecastrss?p=$zipcode&u=c" \
@@ -45,43 +39,48 @@ getweather () {
     echo "$weather"
 }
 
-## tmux
+## tmux related features, e.g. caching
 tmux () {
-    if [[ "$1" == "-t" ]]; then
+    local cachename=".w-cache"
+    local cachedir="$HOME/$cachname"
+    local cache="$HOME/$cachename/weather.log"
+    local time=$(date +%s)
+    local modold=210 # 3 minutes 30 seconds
+    local modmid=180 # 3 minutes
+    local modnew=5   # 5 seconds
 
-        # If .cache dir doesn't exist, make it
-        if [[ ! -d "$cachedir" ]]; then
-            mkdir "$cachedir"
-            touch "$cache"
-            error=$?
-            if [ ! "$error" -eq 0 ]; then
-                echo "mkdir $cachedir failed"
-                exit $error
-            fi
+
+    # If .cache dir doesn't exist, make it
+    if [[ ! -d "$cachedir" ]]; then
+        mkdir "$cachedir"
+        touch "$cache"
+        error=$?
+        if [ ! "$error" -eq 0 ]; then
+            echo "mkdir $cachedir failed"
+            exit $error
         fi
-
-        cachemod=$(stat -f%m "$cache") # Mod time of cache in sec since the epoch
-        let diff=($time - $cachemod)   # Seconds from now since file was modified
-
-        echo "$diff"
-
-        # First case:  on tmux startup; assumes this is the case if cache file
-        #              hasn't been used for longer than modold
-        # Second case: cache is newly created; should thus be empty
-        if [[ $diff -gt $modold || $diff -lt $modnew ]]; then
-            # TODO: maybe this is a bad idea? delays loading twice as long
-            echo "loading"
-
-        # Load cached version
-        elif [[ $diff -lt $modmid ]]; then
-            echo "cache test"
-            read weather < $cache
-            echo "$weather"
-            exit $?
-        fi # If diff is between modmid and modold, continues
     fi
 
-    zipcode
+    cachemod=$(stat -f%m "$cache") # Cache last mod in sec since the epoch
+    let diff=($time - $cachemod)   # Sec from now since file was modified
+
+    echo "$diff"
+
+    # First case:  on tmux startup; assumes this is the case if cache file
+    #              hasn't been used for longer than modold
+    # Second case: cache is newly created; should thus be empty
+    if [[ $diff -gt $modold || $diff -lt $modnew ]]; then
+        # TODO: maybe this is a bad idea? delays loading twice as long
+        echo "loading"
+
+        # Load cached version
+    elif [[ $diff -lt $modmid ]]; then
+        echo "cache test"
+        read weather < $cache
+        echo "$weather"
+        exit $?
+    fi # If diff is between modmid and modold, continues
+
     getweather
 
     # tmux: add weather to cache file
@@ -93,6 +92,7 @@ tmux () {
 ## main
 weather () {
     local arg="$1"
+    # TODO: shift in bpkg here?
 
     case "${arg}" in
 
@@ -107,8 +107,8 @@ weather () {
             return 0
             ;;
 
-        -c|--celcius)
-            celcius
+        -c|--celsius)
+            celsius
             return 0
             ;;
 
@@ -118,14 +118,14 @@ weather () {
             ;;
 
     esac
-    getweather
+    getweather "${@}"
 }
 
 ## export or run
 if [[ ${BASH_SOURCE[0]} != $0 ]]; then
     export -f weather
 else
-    weather "{@}"
+    weather "${@}"
     exit $?
 fi
 
