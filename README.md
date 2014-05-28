@@ -44,7 +44,7 @@ example
 -------
 
 ```sh
-$ weather -c
+$ weather -C
 Mostly Cloudy, 20 ºC
 ```
 
