@@ -25,12 +25,12 @@ usage
 ```
 usage: weather [-chV] [-CF]
 
-[-c|--cached]      uses a cache
-[-h|--help]        help and usage
-[-V|--verison]     version
+  -c, --cached          use a cache
+  -h, --help            output help and usage
+  -V, --verison         output program version
 
-[-C|--celsius]     check in Celcius
-[-F|--fahrenheit]  check in Fahrenheit (default behavior)
+  -C, --celsius         check in Celcius
+  -F, --fahrenheit      check in Fahrenheit (default behavior)
 ```
 
 If provided no arguments, weather.sh will check in Fahrenheit. The `-F` flag exists for the sake of symmetry.
