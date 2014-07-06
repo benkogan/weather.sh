@@ -3,7 +3,7 @@ weather.sh
 
 Echo current temperature and weather from Yahoo Weather.
 
-install
+Install
 -------
 
 [bpkg](https://github.com/bpkg/bpkg)
@@ -19,18 +19,20 @@ $ git clone https://github.com/benkogan/weather.sh.git
 $ make install -C weather/
 ```
 
-usage
+Usage
 -----
 
 ```
-usage: weather [-chV] [-CF]
+Usage: weather [-chV] [-CF]
 
-[-c|--cached]      uses a cache
-[-h|--help]        help and usage
-[-V|--verison]     version
+Options:
 
-[-C|--celsius]     check in Celcius
-[-F|--fahrenheit]  check in Fahrenheit (default behavior)
+  -c, --cached          use a cache
+  -h, --help            output help and usage
+  -V, --verison         output program version
+
+  -C, --celsius         check in Celcius
+  -F, --fahrenheit      check in Fahrenheit (default behavior)
 ```
 
 If provided no arguments, weather.sh will check in Fahrenheit. The `-F` flag exists for the sake of symmetry.
@@ -40,7 +42,7 @@ The cached option creates a cache file to store the current weather. Within the 
 [t]: http://tmux.sourceforge.net/
 [tl]:  https://github.com/edkolev/tmuxline.vim
 
-example
+Example
 -------
 
 ```sh
@@ -48,8 +50,7 @@ $ weather -C
 Mostly Cloudy, 20 ºC
 ```
 
-license
+License
 -------
 
 MIT
-
