@@ -2,11 +2,22 @@
 
 # By Ben Kogan (http://benkogan.com)
 
-VERSION="0.0.2"
+VERSION="0.0.3"
 
 ## output usage
 usage () {
-    echo "usage: weather [-chV] [-CF]"
+    echo ""
+    echo "  Usage: weather [-chV] [-CF]"
+    echo ""
+    echo "  Options:"
+    echo ""
+    echo "    -c, --cached          use a cache"
+    echo "    -h, --help            output help and usage"
+    echo "    -V, --verison         output program version"
+    echo ""
+    echo "    -C, --celsius         check in Celcius"
+    echo "    -F, --fahrenheit      check in Fahrenheit (default behavior)"
+    echo ""
 }
 
 ## get zipcode
@@ -27,15 +38,16 @@ getweather () {
     fi
 
     local weather=$(curl --silent                                        \
-        "http://xml.weather.yahoo.com/forecastrss?p=$zip$ctail"          \
-        | grep -E "(Current Conditions:|$unit<BR)"                       \
+        "http://xml.weather.yahoo.com/forecastrss?p=${zip}${ctail}"      \
+        | grep -E "(Current Conditions:|${unit}<BR)"                     \
         | sed -e "s/Current Conditions://" -e "s/<br \/>//" -e "s/<b>//" \
-        -e "s/<\/b>//" -e "s/$unit<BR \/>/º$unit/" -e                    \
+        -e "s/<\/b>//" -e "s/${unit}<BR \/>/º${unit}/" -e                \
         "s/<description>//" -e "s/<\/description>//"                     \
         | tr -d "\n")
 
     if [[ "$weather" == "" ]]; then
         echo "Cannot fetch weather"
+        echo "Zip: ${zip}"
         exit 1
     else
         echo "$weather"
